@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "147392895509",
+    "firebase_url": "https://lpafinance-edbcf.firebaseio.com",
+    "project_id": "lpafinance-edbcf",
+    "storage_bucket": "lpafinance-edbcf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147392895509:android:45f65a061251ada5",
+        "android_client_info": {
+          "package_name": "com.lalorosas.Finance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "147392895509-03k5jtdqk1luhpimrt7f8j45t76bgrls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJYreqh8_py194M5_cys_j753JoJtn8Ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "147392895509-03k5jtdqk1luhpimrt7f8j45t76bgrls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:147392895509:android:4d3054e2ad9ea35754cc1c",
+        "android_client_info": {
+          "package_name": "com.lalorosas.stockportfoliocreationmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "147392895509-03k5jtdqk1luhpimrt7f8j45t76bgrls.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJYreqh8_py194M5_cys_j753JoJtn8Ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "147392895509-03k5jtdqk1luhpimrt7f8j45t76bgrls.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
