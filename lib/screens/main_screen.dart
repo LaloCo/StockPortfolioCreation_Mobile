@@ -39,6 +39,15 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Creación de Portafolio'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () async {
+              await _auth.signOut();
+              Navigator.pushNamed(context, AuthScreen.route);
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: StockPicksList(
