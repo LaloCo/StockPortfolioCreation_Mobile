@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stockportfoliocreationmobile/screens/auth_screen.dart';
 import 'screens/main_screen.dart';
 
 void main() => runApp(MyApp());
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
       initialRoute: MainScreen.route,
       routes: {
         MainScreen.route: (context) => MainScreen(),
+        AuthScreen.route: (context) => AuthScreen(),
       },
     );
   }
