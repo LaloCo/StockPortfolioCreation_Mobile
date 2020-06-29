@@ -34,7 +34,7 @@ class StockPicksList extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 10.0),
               child: Material(
                 elevation: 5.0,
-                color: Colors.lightBlueAccent,
+                color: Colors.grey.shade600,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     vertical: 10.0,
