@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stockportfoliocreationmobile/constants.dart';
-import 'package:stockportfoliocreationmobile/screens/registration_screen.dart';
+import 'package:stockportfoliocreationmobile/screens/main_screen.dart';
 import 'package:stockportfoliocreationmobile/widgets/round_button.dart';
 
-class AuthScreen extends StatefulWidget {
-  static const String route = '/auth';
+class RegisterScreen extends StatefulWidget {
+  static const String route = '/register';
 
   @override
-  _AuthScreenState createState() => _AuthScreenState();
+  _RegisterScreenState createState() => _RegisterScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _auth = FirebaseAuth.instance;
-  String email, password;
+  String email, password, confirmPassword;
   bool isBusy = false;
 
   @override
@@ -49,48 +49,61 @@ class _AuthScreenState extends State<AuthScreen> {
                     hintText: 'Escribe tu contraseña'),
               ),
               SizedBox(
+                height: 8.0,
+              ),
+              TextField(
+                onChanged: (value) {
+                  confirmPassword = value;
+                },
+                obscureText: true,
+                decoration: kTextInputDecoration.copyWith(
+                    hintText: 'Confirma tu contraseña'),
+              ),
+              SizedBox(
                 height: 24.0,
               ),
               MyRoundButton(
-                text: 'Iniciar sesión',
+                text: 'Regístrate',
                 backgroundColor: Colors.lightBlueAccent,
                 onPressed: () async {
-                  setState(() {
-                    isBusy = true;
-                  });
-                  try {
-                    final newUser = await _auth.signInWithEmailAndPassword(
-                        email: email, password: password);
-                    if (newUser != null) {
-                      Navigator.pop(context);
-                    }
-                  } catch (e) {
-                    print(e);
+                  if (password == confirmPassword) {
+                    setState(() {
+                      isBusy = true;
+                    });
+                    try {
+                      final newUser =
+                          await _auth.createUserWithEmailAndPassword(
+                              email: email, password: password);
+                      if (newUser != null) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                      }
+                    } catch (e) {
+                      print(e);
 
-                    if (e.code == 'ERROR_USER_NOT_FOUND') {
-                      //TODO: Show alert to user
+                      //TODO: evaluate potential errors
                     }
+                    setState(() {
+                      isBusy = false;
+                    });
+                  } else {
+                    //TODO: Show different password alert
                   }
-                  setState(() {
-                    isBusy = false;
-                  });
                 },
               ),
               RichText(
                 text: TextSpan(
-                  text: '¿No tienes una cuenta?',
+                  text: '¿Ya tienes una cuenta?',
                   style: TextStyle(
                     color: Colors.grey.shade800,
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: ' Regístrate',
+                      text: ' Inicia sesión',
                       style: TextStyle(
                         color: Colors.lightBlue,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () =>
-                            Navigator.pushNamed(context, RegisterScreen.route),
+                        ..onTap = () => Navigator.pop(context),
                     ),
                   ],
                 ),
