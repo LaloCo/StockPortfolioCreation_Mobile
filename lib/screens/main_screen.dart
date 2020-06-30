@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:stockportfoliocreationmobile/screens/new_stock_screen.dart';
 import 'auth_screen.dart';
 import 'package:stockportfoliocreationmobile/widgets/stock_picks_list.dart';
 import 'package:stockportfoliocreationmobile/widgets/portfolio_list.dart';
@@ -77,7 +78,9 @@ class _MainScreenState extends State<MainScreen> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.indigoAccent,
           child: Icon(Icons.add),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, NewStockScreen.route);
+          },
         ),
       ),
     );
