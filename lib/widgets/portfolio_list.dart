@@ -28,6 +28,12 @@ class PortfolioList extends StatelessWidget {
         for (var stock in stocks) {
           final name = stock.data['symbol'];
           final date = stock.data['created_at'];
+          DateTime dtDate =
+              DateTime.fromMillisecondsSinceEpoch(date.seconds * 1000);
+          int diffDays = dtDate
+              .difference(DateTime.now().add(Duration(days: -365)))
+              .inDays;
+          print(diffDays);
 
           final stockWidget = Padding(
               padding: EdgeInsets.only(bottom: 10.0),
@@ -50,12 +56,11 @@ class PortfolioList extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Comprada el ' +
-                            DateFormat.yMMMMd().format(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    date.seconds * 1000)),
+                        'Comprada el ' + DateFormat.yMMMMd().format(dtDate),
                         style: TextStyle(
-                          color: Colors.white,
+                          color: diffDays <= 0
+                              ? Colors.red
+                              : diffDays <= 7 ? Colors.yellow : Colors.white,
                           fontSize: 12.0,
                         ),
                       ),
