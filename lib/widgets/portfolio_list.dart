@@ -1,20 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
-class StockPicksList extends StatelessWidget {
+class PortfolioList extends StatelessWidget {
   final _firestore = Firestore.instance;
   final FirebaseUser currentUser;
 
-  StockPicksList({@required this.currentUser});
+  PortfolioList({@required this.currentUser});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _firestore
-          .collection('stock_picks')
-          .orderBy('overall_ranking')
-          .snapshots(),
+      stream:
+          _firestore.collection('portfolio').orderBy('created_at').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -27,8 +26,8 @@ class StockPicksList extends StatelessWidget {
         List<Widget> messageWidgets = [];
         final stocks = snapshot.data.documents;
         for (var stock in stocks) {
-          final name = stock.data['name'];
-          final symbol = stock.data['symbol'];
+          final name = stock.data['symbol'];
+          final date = stock.data['created_at'];
 
           final stockWidget = Padding(
               padding: EdgeInsets.only(bottom: 10.0),
@@ -47,14 +46,17 @@ class StockPicksList extends StatelessWidget {
                         name,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 12.0,
+                          fontSize: 16.0,
                         ),
                       ),
                       Text(
-                        symbol,
+                        'Comprada el ' +
+                            DateFormat.yMMMMd().format(
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    date.seconds * 1000)),
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 18.0,
+                          fontSize: 12.0,
                         ),
                       ),
                     ],
