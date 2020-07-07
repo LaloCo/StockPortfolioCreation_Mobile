@@ -12,8 +12,13 @@ class PortfolioList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream:
-          _firestore.collection('portfolio').orderBy('created_at').snapshots(),
+      // filtering by author requires the creation of an index
+      // back in the Firestore database
+      stream: _firestore
+          .collection('portfolio')
+          .where('author', isEqualTo: currentUser.uid)
+          .orderBy('created_at')
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -33,7 +38,6 @@ class PortfolioList extends StatelessWidget {
           int diffDays = dtDate
               .difference(DateTime.now().add(Duration(days: -365)))
               .inDays;
-          print(diffDays);
 
           final stockWidget = Padding(
               padding: EdgeInsets.only(bottom: 10.0),
