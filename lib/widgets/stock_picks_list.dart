@@ -29,6 +29,7 @@ class StockPicksList extends StatelessWidget {
         for (var stock in stocks) {
           final name = stock.data['name'];
           final symbol = stock.data['symbol'];
+          final industry = stock.data['industry'];
 
           final stockWidget = Padding(
               padding: EdgeInsets.only(bottom: 10.0),
@@ -55,6 +56,13 @@ class StockPicksList extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
+                        ),
+                      ),
+                      Text(
+                        industry,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.0,
                         ),
                       ),
                     ],
