@@ -14,13 +14,13 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _auth = FirebaseAuth.instance;
-  FirebaseUser currentUser;
+  String userId = '';
 
   @override
   void initState() {
-    evaluateIfLoggedIn();
-
     super.initState();
+
+    evaluateIfLoggedIn();
   }
 
   void evaluateIfLoggedIn() async {
@@ -28,18 +28,35 @@ class _MainScreenState extends State<MainScreen> {
       final user = await _auth.currentUser();
       if (user != null) {
         setState(() {
-          currentUser = user;
+          userId = user.uid;
+          print(userId);
         });
       } else {
-        Navigator.pushNamed(context, AuthScreen.route);
+        authenticate();
       }
     } catch (e) {
       print(e);
     }
   }
 
+  void authenticate() async {
+    String received = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => AuthScreen()));
+    print('RECEIVED: ' + received);
+    setState(() {
+      userId = received;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (userId == null) {
+      return Center(
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.lightBlueAccent,
+        ),
+      );
+    }
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -50,7 +67,10 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.exit_to_app),
               onPressed: () async {
                 await _auth.signOut();
-                Navigator.pushNamed(context, AuthScreen.route);
+                setState(() {
+                  userId = '';
+                });
+                authenticate();
               },
             ),
           ],
@@ -65,13 +85,11 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             SafeArea(
               child: PortfolioList(
-                currentUser: currentUser,
+                userId: userId,
               ),
             ),
             SafeArea(
-              child: StockPicksList(
-                currentUser: currentUser,
-              ),
+              child: StockPicksList(),
             ),
           ],
         ),

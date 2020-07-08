@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 
 class PortfolioList extends StatelessWidget {
   final _firestore = Firestore.instance;
-  final FirebaseUser currentUser;
+  final String userId;
 
-  PortfolioList({@required this.currentUser});
+  PortfolioList({@required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class PortfolioList extends StatelessWidget {
       // back in the Firestore database
       stream: _firestore
           .collection('portfolio')
-          .where('author', isEqualTo: currentUser.uid)
+          .where('author', isEqualTo: userId)
           .orderBy('created_at')
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

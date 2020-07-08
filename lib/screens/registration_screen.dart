@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           await _auth.createUserWithEmailAndPassword(
                               email: email, password: password);
                       if (newUser != null) {
-                        Navigator.popUntil(context, (route) => route.isFirst);
+                        Navigator.pop(context, newUser.user.uid);
                       }
                     } catch (e) {
                       print(e);

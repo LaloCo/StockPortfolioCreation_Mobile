@@ -62,7 +62,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     final newUser = await _auth.signInWithEmailAndPassword(
                         email: email, password: password);
                     if (newUser != null) {
-                      Navigator.pop(context);
+                      Navigator.pop(context, newUser.user.uid);
                     }
                   } catch (e) {
                     print(e);
@@ -89,8 +89,8 @@ class _AuthScreenState extends State<AuthScreen> {
                         color: Colors.lightBlue,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () =>
-                            Navigator.pushNamed(context, RegisterScreen.route),
+                        ..onTap = () => Navigator.pushReplacementNamed(
+                            context, RegisterScreen.route),
                     ),
                   ],
                 ),
