@@ -4,9 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StockPicksList extends StatelessWidget {
   final _firestore = Firestore.instance;
-  final FirebaseUser currentUser;
 
-  StockPicksList({@required this.currentUser});
+  StockPicksList();
 
   @override
   Widget build(BuildContext context) {
