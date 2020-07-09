@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/auth_screen.dart';
-import 'screens/registration_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/new_stock_screen.dart';
 
@@ -16,7 +15,6 @@ class MyApp extends StatelessWidget {
       routes: {
         MainScreen.route: (context) => MainScreen(),
         AuthScreen.route: (context) => AuthScreen(),
-        RegisterScreen.route: (context) => RegisterScreen(),
         NewStockScreen.route: (context) => NewStockScreen(),
       },
     );

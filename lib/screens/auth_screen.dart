@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stockportfoliocreationmobile/constants.dart';
-import 'package:stockportfoliocreationmobile/screens/registration_screen.dart';
 import 'package:stockportfoliocreationmobile/widgets/round_button.dart';
 
 class AuthScreen extends StatefulWidget {
