@@ -2,12 +2,56 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class PortfolioList extends StatelessWidget {
   final _firestore = Firestore.instance;
   final String userId;
 
   PortfolioList({@required this.userId});
+
+  void DeleteStock(DocumentSnapshot stock) async {
+    try {
+      await _firestore
+          .collection('portfolio')
+          .document(stock.documentID)
+          .delete();
+    } catch (ex) {
+      print(ex);
+    }
+  }
+
+  void ShowAlert(BuildContext context, DocumentSnapshot stock) {
+    final date = stock.data['created_at'];
+    DateTime purchaseDate =
+        DateTime.fromMillisecondsSinceEpoch(date.seconds * 1000);
+    DateTime sellByDate = purchaseDate.add(Duration(days: 365));
+    Alert(
+      context: context,
+      type: AlertType.info,
+      title: stock.data['symbol'],
+      desc: 'Comprada el ' +
+          DateFormat.yMMMMd().format(purchaseDate) +
+          '. Vender para el ' +
+          DateFormat.yMMMMd().format(sellByDate),
+      buttons: [
+        DialogButton(
+          child: Text(
+            'Borrar',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            ),
+          ),
+          color: Colors.red,
+          onPressed: () {
+            DeleteStock(stock);
+            Navigator.pop(context);
+          },
+        )
+      ],
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +83,11 @@ class PortfolioList extends StatelessWidget {
               .difference(DateTime.now().add(Duration(days: -365)))
               .inDays;
 
-          final stockWidget = Padding(
+          final stockWidget = GestureDetector(
+            onTap: () {
+              ShowAlert(context, stock);
+            },
+            child: Padding(
               padding: EdgeInsets.only(bottom: 10.0),
               child: Material(
                 elevation: 5.0,
@@ -71,7 +119,9 @@ class PortfolioList extends StatelessWidget {
                     ],
                   ),
                 ),
-              ));
+              ),
+            ),
+          );
           messageWidgets.add(stockWidget);
         }
         return Expanded(
