@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stockportfoliocreationmobile/screens/new_stock_screen.dart';
 import 'auth_screen.dart';
@@ -150,9 +151,24 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
         body: TabBarView(
           children: [
             SafeArea(
-              child: PortfolioList(
-                userId: userId,
-              ),
+              child: enablePlusButton
+                  ? PortfolioList(
+                      userId: userId,
+                    )
+                  : Center(
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Ya verifiqué mi correo',
+                          style: TextStyle(
+                            color: Colors.lightBlue,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              evaluateIfEmailIsVerified(currentUser);
+                            },
+                        ),
+                      ),
+                    ),
             ),
             SafeArea(
               child: StockPicksList(),
