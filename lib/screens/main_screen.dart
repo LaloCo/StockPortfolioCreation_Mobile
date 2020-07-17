@@ -70,6 +70,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   void evaluateIfEmailIsVerified(FirebaseUser user) async {
     await user.reload();
+    user = await _auth.currentUser();
     if (!user.isEmailVerified) {
       showVerificationAlert(context, user);
     } else {
