@@ -4,6 +4,7 @@ import 'package:stockportfoliocreationmobile/screens/new_stock_screen.dart';
 import 'auth_screen.dart';
 import 'package:stockportfoliocreationmobile/widgets/stock_picks_list.dart';
 import 'package:stockportfoliocreationmobile/widgets/portfolio_list.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class MainScreen extends StatefulWidget {
   static const String route = '/main';
@@ -12,25 +13,39 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final _auth = FirebaseAuth.instance;
   String userId = '';
+  FirebaseUser currentUser;
+  bool enablePlusButton = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     evaluateIfLoggedIn();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.resumed) {
+      currentUser = await _auth.currentUser();
+      evaluateIfEmailIsVerified(currentUser);
+    }
+
+    super.didChangeAppLifecycleState(state);
+  }
+
   void evaluateIfLoggedIn() async {
     try {
-      final user = await _auth.currentUser();
-      if (user != null) {
+      currentUser = await _auth.currentUser();
+      if (currentUser != null) {
         setState(() {
-          userId = user.uid;
-          print(userId);
+          userId = currentUser.uid;
         });
+
+        evaluateIfEmailIsVerified(currentUser);
       } else {
         authenticate();
       }
@@ -46,6 +61,57 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       userId = received;
     });
+    currentUser = await _auth.currentUser();
+    if (currentUser != null) {
+      evaluateIfEmailIsVerified(currentUser);
+    }
+  }
+
+  void evaluateIfEmailIsVerified(FirebaseUser user) async {
+    await user.reload();
+    if (!user.isEmailVerified) {
+      showVerificationAlert(context, user);
+    } else {
+      setState(() {
+        enablePlusButton = true;
+      });
+    }
+  }
+
+  void showVerificationAlert(BuildContext context, FirebaseUser user) {
+    Alert(
+      context: context,
+      type: AlertType.warning,
+      title: 'Tu correo no está verificado',
+      desc: 'Necesitamos verificar tu correo antes de poder continuar,' +
+          ' por favor revisa tu bandeja de entrada.',
+      buttons: [
+        DialogButton(
+          child: Text(
+            'Volver a enviar',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            ),
+          ),
+          color: Colors.red,
+          onPressed: () async {
+            await user.sendEmailVerification();
+            Navigator.pop(context);
+          },
+        )
+      ],
+    ).show();
+  }
+
+  void navigateToNewStockScreen() {
+    Navigator.pushNamed(context, NewStockScreen.route);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -94,11 +160,11 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.indigoAccent,
+          backgroundColor:
+              enablePlusButton ? Colors.indigoAccent : Colors.grey.shade300,
+          disabledElevation: 0,
           child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.pushNamed(context, NewStockScreen.route);
-          },
+          onPressed: enablePlusButton ? navigateToNewStockScreen : null,
         ),
       ),
     );

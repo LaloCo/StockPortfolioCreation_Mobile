@@ -162,6 +162,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 email: registerEmail,
                                 password: registerPassword);
                         if (newUser != null) {
+                          // send email verification since user is new
+                          await newUser.user.sendEmailVerification();
                           Navigator.pop(context, newUser.user.uid);
                         }
                       } catch (e) {
