@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stockportfoliocreationmobile/constants.dart';
 import 'package:stockportfoliocreationmobile/widgets/round_button.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String route = '/auth';
@@ -14,10 +15,50 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
-  String email, password;
+  String email = "", password = "";
   String registerEmail, registerPassword, confirmPassword;
   bool isBusy = false;
   bool isLogin = true;
+
+  void forgotPassword() {
+    if (email.isEmpty) {
+      Alert(
+        context: context,
+        title: "Escribe tu correo",
+        desc:
+            "Escribe tu correo electrónico para enviarte los pasos para cambiar tu contraseña.",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Ok",
+              style: TextStyle(color: Colors.white, fontSize: 20.0),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ).show();
+    } else {
+      _auth.sendPasswordResetEmail(email: email).then((value) {
+        Alert(
+          context: context,
+          title: "Enviado",
+          desc:
+              "Las instrucciones para recuperar tu contraseña han sido enviadas a tu correo.",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "Ok",
+                style: TextStyle(color: Colors.white, fontSize: 20.0),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ).show();
+      }).catchError((error) {
+        print(error);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +141,18 @@ class _AuthScreenState extends State<AuthScreen> {
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: 12.0,
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: '¿Olvidaste tu contraseña?',
+                    style: TextStyle(
+                      color: Colors.lightBlue,
+                    ),
+                    recognizer: TapGestureRecognizer()..onTap = forgotPassword,
+                  ),
+                ),
               ],
             ),
           ),
@@ -162,6 +215,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                 email: registerEmail,
                                 password: registerPassword);
                         if (newUser != null) {
+                          // send email verification since user is new
+                          await newUser.user.sendEmailVerification();
                           Navigator.pop(context, newUser.user.uid);
                         }
                       } catch (e) {
