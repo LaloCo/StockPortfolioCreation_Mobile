@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:stockportfoliocreationmobile/constants.dart';
 import 'package:stockportfoliocreationmobile/widgets/round_button.dart';
@@ -15,8 +17,9 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   final _auth = FirebaseAuth.instance;
-  String email = "", password = "";
-  String registerEmail, registerPassword, confirmPassword;
+  String email = '', password = '';
+  String registerEmail = '', registerPassword = '', confirmPassword = '';
+  String errorMessage = '';
   bool isBusy = false;
   bool isLogin = true;
 
@@ -60,6 +63,113 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
+  void setErrorMessage(String message) {
+    setState(() {
+      errorMessage = message;
+    });
+  }
+
+  void login() async {
+    if (email.isEmpty) {
+      setErrorMessage('El correo no puede estar vacío.');
+      return;
+    }
+    if (password.isEmpty) {
+      setErrorMessage('La contraseña no puede estar vacía.');
+      return;
+    }
+
+    setState(() {
+      isBusy = true;
+    });
+    try {
+      final result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (result != null) {
+        Navigator.pop(context, result.user.uid);
+      }
+    } on PlatformException catch (e) {
+      print(e.toString());
+
+      if (e.code == 'ERROR_INVALID_EMAIL') {
+        setErrorMessage('El correo no tiene el formato correcto');
+      } else if (e.code == 'ERROR_USER_NOT_FOUND') {
+        setErrorMessage('Este correo no está asociado a nunguna cuenta.');
+      } else if (e.code == 'ERROR_WRONG_PASSWORD') {
+        setErrorMessage('La contraseña es incorrecta.');
+      } else {
+        if (e.details != null) {
+          setErrorMessage(e.details);
+        } else {
+          setErrorMessage('Un error desconocido ocurrió.');
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+
+      setErrorMessage('Un error desconocido ocurrió');
+    }
+
+    setState(() {
+      isBusy = false;
+    });
+  }
+
+  void register() async {
+    if (registerEmail.isEmpty) {
+      setErrorMessage('El correo no puede estar vacío.');
+      return;
+    }
+    if (registerPassword.isEmpty) {
+      setErrorMessage('La contraseña no puede estar vacía.');
+      return;
+    }
+    if (confirmPassword.isEmpty) {
+      setErrorMessage('Debes confirmar tu contraseña.');
+      return;
+    }
+
+    if (registerPassword == confirmPassword) {
+      setState(() {
+        isBusy = true;
+      });
+      try {
+        final newUser = await _auth.createUserWithEmailAndPassword(
+            email: registerEmail, password: registerPassword);
+        if (newUser != null) {
+          // send email verification since user is new
+          await newUser.user.sendEmailVerification();
+          Navigator.pop(context, newUser.user.uid);
+        }
+      } on PlatformException catch (e) {
+        print(e.toString());
+
+        if (e.code == 'ERROR_INVALID_EMAIL') {
+          setErrorMessage('El correo no tiene el formato correcto');
+        } else if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+          setErrorMessage('Este correo ya está asociado a una cuenta.');
+        } else if (e.code == 'ERROR_WEAK_PASSWORD') {
+          setErrorMessage('La contraseña debe ser de al menos 6 caracteres.');
+        } else {
+          if (e.details != null) {
+            setErrorMessage(e.details);
+          } else {
+            setErrorMessage('Un error desconocido ocurrió.');
+          }
+        }
+      } catch (e) {
+        print(e.toString());
+
+        setErrorMessage('Un error desconocido ocurrió');
+      }
+      setState(() {
+        isBusy = false;
+      });
+    } else {
+      setErrorMessage('Las contraseñas son diferentes.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLogin) {
@@ -92,32 +202,21 @@ class _AuthScreenState extends State<AuthScreen> {
                       hintText: 'Escribe tu contraseña'),
                 ),
                 SizedBox(
-                  height: 24.0,
+                  height: 8.0,
+                ),
+                Text(
+                  errorMessage,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+                SizedBox(
+                  height: 8.0,
                 ),
                 MyRoundButton(
                   text: 'Iniciar sesión',
                   backgroundColor: Colors.lightBlueAccent,
-                  onPressed: () async {
-                    setState(() {
-                      isBusy = true;
-                    });
-                    try {
-                      final newUser = await _auth.signInWithEmailAndPassword(
-                          email: email, password: password);
-                      if (newUser != null) {
-                        Navigator.pop(context, newUser.user.uid);
-                      }
-                    } catch (e) {
-                      print(e);
-
-                      if (e.code == 'ERROR_USER_NOT_FOUND') {
-                        //TODO: Show alert to user
-                      }
-                    }
-                    setState(() {
-                      isBusy = false;
-                    });
-                  },
+                  onPressed: login,
                 ),
                 RichText(
                   text: TextSpan(
@@ -134,6 +233,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             setState(() {
+                              errorMessage = "";
                               isLogin = false;
                             });
                           },
@@ -199,38 +299,21 @@ class _AuthScreenState extends State<AuthScreen> {
                       hintText: 'Confirma tu contraseña'),
                 ),
                 SizedBox(
-                  height: 24.0,
+                  height: 8.0,
+                ),
+                Text(
+                  errorMessage,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+                SizedBox(
+                  height: 8.0,
                 ),
                 MyRoundButton(
                   text: 'Regístrate',
                   backgroundColor: Colors.lightBlueAccent,
-                  onPressed: () async {
-                    if (registerPassword == confirmPassword) {
-                      setState(() {
-                        isBusy = true;
-                      });
-                      try {
-                        final newUser =
-                            await _auth.createUserWithEmailAndPassword(
-                                email: registerEmail,
-                                password: registerPassword);
-                        if (newUser != null) {
-                          // send email verification since user is new
-                          await newUser.user.sendEmailVerification();
-                          Navigator.pop(context, newUser.user.uid);
-                        }
-                      } catch (e) {
-                        print(e);
-
-                        //TODO: evaluate potential errors
-                      }
-                      setState(() {
-                        isBusy = false;
-                      });
-                    } else {
-                      //TODO: Show different password alert
-                    }
-                  },
+                  onPressed: register,
                 ),
                 RichText(
                   text: TextSpan(
@@ -247,6 +330,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             setState(() {
+                              errorMessage = "";
                               isLogin = true;
                             });
                           },
