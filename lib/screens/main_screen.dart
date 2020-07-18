@@ -72,6 +72,9 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     await user.reload();
     user = await _auth.currentUser();
     if (!user.isEmailVerified) {
+      setState(() {
+        enablePlusButton = false;
+      });
       showVerificationAlert(context, user);
     } else {
       setState(() {
