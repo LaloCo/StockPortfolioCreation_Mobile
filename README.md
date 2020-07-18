@@ -1,4 +1,4 @@
-# stockportfoliocreationmobile
+# Portfolify
 
 The mobile application for the Portfolio creation project from TLB that STILL beats the market
 
