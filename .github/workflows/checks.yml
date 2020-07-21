@@ -1,0 +1,19 @@
+on:
+  pull_request:
+    branches:
+      - master
+      - tester
+      - developer
+name: Test and Build apk & ipa
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '12.x'
+    - uses: subosito/flutter-action@v1
+    - run: flutter pub get
+    - run: flutter build apk --debug --split-per-abi
