@@ -23,6 +23,7 @@ class MyRoundButton extends StatelessWidget {
             text,
             style: TextStyle(
               color: Colors.white,
+              fontSize: 16.0,
             ),
           ),
         ),
