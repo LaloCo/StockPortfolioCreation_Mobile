@@ -1,4 +1,14 @@
-on: pull_request
+on:
+  push:
+    branches:
+      - master
+      - tester
+      - developer
+  pull_request:
+    branches:
+      - master
+      - tester
+      - developer
 name: Test and Build apk & ipa
 jobs:
   build:
