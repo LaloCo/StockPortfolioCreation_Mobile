@@ -1,0 +1,2 @@
+on: push, pull_request
+name: Test and Build apk & ipa
