@@ -21,7 +21,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "build/app/outputs/apk/debug/*.apk"
-        tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-${{ github.sha }}
+        tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-droid-${{ github.sha }}
         token: ${{ secrets.TOKEN }}
   build_ios:
     name: Build IPA
@@ -35,5 +35,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/ipa/debug/*.ipa"
-          tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-${{ github.sha }}
+          tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-ios-${{ github.sha }}
           token: ${{ secrets.TOKEN }}
