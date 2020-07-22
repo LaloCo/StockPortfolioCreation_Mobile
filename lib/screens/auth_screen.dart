@@ -218,11 +218,15 @@ class _AuthScreenState extends State<AuthScreen> {
                   backgroundColor: Colors.lightBlueAccent,
                   onPressed: login,
                 ),
+                SizedBox(
+                  height: 8.0,
+                ),
                 RichText(
                   text: TextSpan(
                     text: '¿No tienes una cuenta?',
                     style: TextStyle(
                       color: Colors.grey.shade800,
+                      fontSize: 16.0,
                     ),
                     children: <TextSpan>[
                       TextSpan(
@@ -249,6 +253,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     text: '¿Olvidaste tu contraseña?',
                     style: TextStyle(
                       color: Colors.lightBlue,
+                      fontSize: 16.0,
                     ),
                     recognizer: TapGestureRecognizer()..onTap = forgotPassword,
                   ),
@@ -315,11 +320,15 @@ class _AuthScreenState extends State<AuthScreen> {
                   backgroundColor: Colors.lightBlueAccent,
                   onPressed: register,
                 ),
+                SizedBox(
+                  height: 8.0,
+                ),
                 RichText(
                   text: TextSpan(
                     text: '¿Ya tienes una cuenta?',
                     style: TextStyle(
                       color: Colors.grey.shade800,
+                      fontSize: 16.0,
                     ),
                     children: <TextSpan>[
                       TextSpan(
