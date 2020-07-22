@@ -2,8 +2,6 @@ on:
   push:
     branches:
       - master
-      - tester
-      - developer
 name: Test and Build apk & ipa
 jobs:
   build_android:
@@ -34,6 +32,6 @@ jobs:
       - name: Create a Release IPA
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/ipa/debug/*.ipa"
+          artifacts: "build/ios/iphoneos/Runner.app"
           tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-ios-${{ github.sha }}
           token: ${{ secrets.TOKEN }}
