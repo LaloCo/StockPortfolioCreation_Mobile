@@ -1,7 +1,6 @@
 on:
   pull_request:
     branches:
-      - master
       - tester
       - developer
 name: Run checks (Android & iOS)
