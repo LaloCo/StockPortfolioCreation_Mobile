@@ -21,7 +21,9 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v1
       - name: Install pub Dependencies
-        run: flutter pub get
+        run:
+          flutter pub get
+          flutter clean
       - name: Build Android App
         run: flutter build appbundle
         env:
@@ -31,7 +33,7 @@ jobs:
           KEY_PATH: key.jks
       - name: Build iOS App
         run:
-          flutter build ios --no-codesign
+          flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
           cd Payload
