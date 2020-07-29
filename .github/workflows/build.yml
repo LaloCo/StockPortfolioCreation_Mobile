@@ -14,12 +14,21 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '12.x'
+      - name : Output keystore to CI environment
+        run: echo $SIGNING_KEY | base64 -d > android/app/key.jks
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
       - name: Set up Flutter
         uses: subosito/flutter-action@v1
       - name: Install pub Dependencies
         run: flutter pub get
       - name: Build Android App
         run: flutter build appbundle
+        env:
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          ALIAS: ${{ secrets.ALIAS }}
+          KEY_PATH: key.jks
       - name: Build iOS App
         run:
           flutter build ios --no-codesign
