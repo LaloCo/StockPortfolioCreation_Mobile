@@ -21,9 +21,9 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v1
       - name: Install pub Dependencies
-        run:
-          flutter pub get
-          flutter clean
+        run: flutter pub get
+      - name: Clean flutter project
+        run: flutter clean
       - name: Build Android App
         run: flutter build appbundle
         env:
@@ -32,14 +32,7 @@ jobs:
           ALIAS: ${{ secrets.ALIAS }}
           KEY_PATH: key.jks
       - name: Build iOS App
-        run:
-          flutter build ios --release --no-codesign
-          cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app.ipa Payload
+        run: flutter build ios --release --no-codesign
       - name: Create a Release
         uses: ncipollo/release-action@v1
         with:
