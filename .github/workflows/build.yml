@@ -37,5 +37,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/app/outputs/bundle/release/app.aab,build/ios/iphoneos/app.ipa"
-          tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-droid-${{ github.sha }}
+          tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-${{ github.sha }}
           token: ${{ secrets.TOKEN }}
