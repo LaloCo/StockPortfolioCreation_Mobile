@@ -36,6 +36,6 @@ jobs:
       - name: Create a Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/bundle/release/app.aab,build/ios/iphoneos/app.ipa"
+          artifacts: "build/app/outputs/bundle/release/*.aab,build/ios/iphoneos/*.app"
           tag: v${{ secrets.MAJOR }}.${{ secrets.MINOR }}-${{ github.sha }}
           token: ${{ secrets.TOKEN }}
