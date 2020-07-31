@@ -21,7 +21,14 @@ jobs:
       - name: Clean flutter project
         run: flutter clean
       - name: Build iOS App
-        run: flutter build ios --release --no-codesign
+        run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
       - name: Upload IPA
         uses: actions/upload-artifact@v2
         with:
@@ -38,7 +45,9 @@ jobs:
         with:
           java-version: '12.x'
       - name : Output keystore to CI environment
-        run: echo $SIGNING_KEY | base64 -d > android/app/key.jks
+        run: |
+          echo $SIGNING_KEY
+          base64 -d > key.jks
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
       - name: Set up Flutter
@@ -79,8 +88,8 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_IOS_APPID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
-          group: testers
-          file: Runner.ipa
+          groups: testers
+          file: app.ipa
   beta_android:
     name: Upload Android Beta to Firebase App Distribution
     needs: [build-android]
@@ -101,5 +110,5 @@ jobs:
         with:
           appId: ${{ secrets.FIREBASE_ANDROID_APPID }}
           token: ${{ secrets.FIREBASE_TOKEN }}
-          group: testers
+          groups: testers
           file: app-release.aap
