@@ -1,8 +1,8 @@
 on:
   push:
     branches:
-      - master
-name: Build and Release APK & IPA
+      - tester
+name: Build and Release Beta APK & IPA
 jobs:
   build-ios:
     name: Build Flutter (iOS)
